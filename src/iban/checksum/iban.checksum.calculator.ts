@@ -3,12 +3,12 @@ import { Injectable } from "@nestjs/common";
 @Injectable()
 export class IbanChecksumCalculator {
 
-    calculate(accountIdentifier: string, countryCode: string): string {
-        if (accountIdentifier.length > 30) {
-            throw new Error("Account identifier code must contain max of 30 letters or characters!");
+    calculate(bban: string, countryCode: string): string {
+        if (bban.length > 30) {
+            throw new Error("BBAN must contain max of 30 letters or characters!");
         }
-        if (!/^[A-Za-z0-9]*$/.test(accountIdentifier)) {
-            throw new Error("Account identifier code must contain only letters or characters!");
+        if (!/^[A-Za-z0-9]*$/.test(bban)) {
+            throw new Error("BBAN must contain only letters or characters!");
         }
         if (countryCode.length != 2) {
             throw new Error("Country code must contain exactly 2 letters!");
@@ -16,7 +16,7 @@ export class IbanChecksumCalculator {
         if (!/^[A-Za-z]*$/.test(countryCode)) {
             throw new Error("Country code must contain only letters!");
         }
-        let digits = this.convertToDigits(accountIdentifier + countryCode + '00');
+        let digits = this.convertToDigits(bban + countryCode + '00');
         return this.calculateChecksum(digits).toString().padStart(2, '0');
     }
 

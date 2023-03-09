@@ -17,10 +17,10 @@ describe('IbanChecksumCalculator', () => {
         it('should find invalid account identifier', () => {
             expect(() => ibanChecksumCalculator.calculate(
                 '1234567890123456789012345678901', 'DE'
-            )).toThrow("Account identifier code must contain max of 30 letters or characters!");
+            )).toThrow("BBAN must contain max of 30 letters or characters!");
             expect(() => ibanChecksumCalculator.calculate(
                 '12345ABCD!', 'DE'
-            )).toThrow("Account identifier code must contain only letters or characters!");
+            )).toThrow("BBAN must contain only letters or characters!");
         });
         it('should find invalid country code', () => {
             expect(() => ibanChecksumCalculator.calculate(

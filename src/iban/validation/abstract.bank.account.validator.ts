@@ -15,8 +15,8 @@ export abstract class AbstractBankAccountValidator {
         if (iban.length != this.ibanLength()) {
             throw new Error("IBAN has wrong length!");
         }
-        let accountIdentifier = iban.substring(4, this.ibanLength());
-        let checksum = this.ibanChecksumCalculator.calculate(accountIdentifier, countryCode);
+        let bban = iban.substring(4, this.ibanLength());
+        let checksum = this.ibanChecksumCalculator.calculate(bban, countryCode);
         if (checksum != iban.substring(2, 4)) {
             throw new Error("IBAN checksum is incorrect!");
         }
