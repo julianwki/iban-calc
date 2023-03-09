@@ -23,11 +23,15 @@ export abstract class AbstractBankAccountValidator {
     }
 
     validateBankCode(bankCode: string) {
-        throw new Error("Bank code is not valid!");
+        throw new Error(`Bank code is not supported in ${this.countryCode()}!`);
+    }
+
+    validateBranchCode(branchCode: string) {
+        throw new Error(`Branch code is not supported in ${this.countryCode()}!`);
     }
 
     validateAccountNumber(accountNumber: string) {
-        throw new Error("Account number is not valid!");
+        throw new Error(`Account number is not supported in ${this.countryCode()}!`);
     }
 
 }

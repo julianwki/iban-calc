@@ -42,6 +42,12 @@ describe('DEBankAccountValidator', () => {
         });
     });
 
+    describe('branch code validation', () => {
+        it('should not be supported', () => {
+            expect(() => deBankAccountValidator.validateBranchCode("4711")).toThrow("Branch code is not supported in DE!");
+        });
+    })
+
     describe('account number validation', () => {        
         it('should not find an error', () => {
             expect(() => deBankAccountValidator.validateAccountNumber("1015871393")).not.toThrowError();
