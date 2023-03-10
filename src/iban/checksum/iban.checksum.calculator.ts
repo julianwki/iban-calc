@@ -3,7 +3,7 @@ import { Injectable } from "@nestjs/common";
 @Injectable()
 export class IbanChecksumCalculator {
 
-    calculate(bban: string, countryCode: string): string {
+    calculate(bban: string, countryCode: string) {
         if (bban.length > 30) {
             throw new Error("BBAN must contain max of 30 letters or characters!");
         }
@@ -17,35 +17,30 @@ export class IbanChecksumCalculator {
             throw new Error("Country code must contain only letters!");
         }
         let digits = this.convertToDigits(bban + countryCode + '00');
-        return this.calculateChecksum(digits).toString().padStart(2, '0');
+        return this.calculateChecksum(digits);
     }
 
-    private convertToDigits(str: string): bigint {
-        var digits = '';
-        for (var i = 0; i < str.length; i++) {
-            let char = str.charAt(i);
-            if (this.isDigit(char)) {
-                digits += char;
-            } else {
-                digits += this.convertToNumber(char);
-            }
-        }
-        return BigInt(digits);
+    private convertToDigits(str: string) {
+        return str.split("")
+            .map(c => this.isDigit(c) ? c : this.convertToNumber(c))
+            .join("");
     }
 
-    private isDigit(char: string): boolean {
+    private isDigit(char: string) {
         return (char != null) && char.length == 1 && !isNaN(Number(char));
     }
 
-    private convertToNumber(char: string): string {
+    private convertToNumber(char: string) {
         const offset = 87;
         let number = char.toLowerCase().charCodeAt(0) - offset;
         return number.toString();
     }
 
-    private calculateChecksum(digits: bigint): bigint {
+    private calculateChecksum(digits: string) {
+        let number = BigInt(digits);
         const ninetyeight = BigInt(98);
         const ninetyseven = BigInt(97);
-        return ninetyeight - (digits % ninetyseven);
+        let checksum = ninetyeight - (number % ninetyseven);
+        return checksum.toString().padStart(2, '0');
     }
 }
