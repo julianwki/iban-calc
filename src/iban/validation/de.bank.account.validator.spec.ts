@@ -1,10 +1,19 @@
+import { Test } from "@nestjs/testing";
 import { IbanChecksumCalculator } from "../checksum/iban.checksum.calculator";
 import { DEBankAccountValidator } from "./de.bank.account.validator";
 
 describe('DEBankAccountValidator', () => {
-    let deBankAccountValidator = new DEBankAccountValidator(
-        new IbanChecksumCalculator()
-    );
+    let deBankAccountValidator: DEBankAccountValidator;
+    let ibanChecksumCalculator: IbanChecksumCalculator;
+
+    beforeEach(async () => {
+        const moduleRef = await Test.createTestingModule({
+            providers: [DEBankAccountValidator, IbanChecksumCalculator]
+        }).compile();
+
+        deBankAccountValidator = moduleRef.get<DEBankAccountValidator>(DEBankAccountValidator);
+        ibanChecksumCalculator = moduleRef.get<IbanChecksumCalculator>(IbanChecksumCalculator)
+    });
 
     describe('configuration', () => {
         it('should have german country code', () => {
@@ -14,18 +23,22 @@ describe('DEBankAccountValidator', () => {
             expect(deBankAccountValidator.ibanLength()).toBe(22);
         });
     });
-    
+
     describe('iban validation', () => {
         it('should not find an error', () => {
+            jest.spyOn(ibanChecksumCalculator, 'calculate').mockImplementation(() => '02')
             expect(() => deBankAccountValidator.validateIban("DE02200505501015871393")).not.toThrowError();
         });
         it('should find invalid country code', () => {
+            jest.spyOn(ibanChecksumCalculator, 'calculate').mockImplementation(() => '02')
             expect(() => deBankAccountValidator.validateIban("AQ02200505501015871393")).toThrow("Country code is not valid!");
         });
         it('should find invalid iban length', () => {
+            jest.spyOn(ibanChecksumCalculator, 'calculate').mockImplementation(() => '02')
             expect(() => deBankAccountValidator.validateIban("DE0220050550101587139")).toThrow("IBAN has wrong length!");
         });
         it('should find invalid iban checksum', () => {
+            jest.spyOn(ibanChecksumCalculator, 'calculate').mockImplementation(() => '02')
             expect(() => deBankAccountValidator.validateIban("DE99200505501015871393")).toThrow("IBAN checksum is incorrect!");
         });
     });
@@ -48,7 +61,7 @@ describe('DEBankAccountValidator', () => {
         });
     })
 
-    describe('account number validation', () => {        
+    describe('account number validation', () => {
         it('should not find an error', () => {
             expect(() => deBankAccountValidator.validateAccountNumber("1015871393")).not.toThrowError();
             expect(() => deBankAccountValidator.validateAccountNumber("101587139")).not.toThrowError();

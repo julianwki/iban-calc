@@ -6,11 +6,11 @@ describe('IbanService', () => {
     let ibanService: IbanService;
 
     beforeEach(async () => {
-        const app: TestingModule = await Test.createTestingModule({
+        const moduleRef = await Test.createTestingModule({
             imports: [IbanModule]
         }).compile();
 
-        ibanService = app.get<IbanService>(IbanService);
+        ibanService = moduleRef.get<IbanService>(IbanService);
     });
 
     describe('iban check', () => {
